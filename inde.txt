@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Tracker | Startup Analytics</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Chart.js for Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide-dev@latest"></script>
+
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="hidden md:flex md:flex-shrink-0">
+            <div class="flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 sidebar">
+                <div class="flex items-center justify-center h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+                    <i data-lucide="bar-chart-3" class="text-indigo-500"></i>
+                    <span class="ml-2 text-xl font-semibold text-gray-800 dark:text-white">Growth Tracker</span>
+                </div>
+                <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
+                    <nav class="flex-1 space-y-2">
+                        <a href="#" id="nav-dashboard" class="nav-link active">
+                            <i data-lucide="layout-dashboard"></i> Dashboard
+                        </a>
+                        <a href="#" id="nav-projects" class="nav-link">
+                            <i data-lucide="kanban-square"></i> Projects
+                        </a>
+                        <a href="#" id="nav-team" class="nav-link">
+                            <i data-lucide="users"></i> Team
+                        </a>
+                        <a href="#" id="nav-settings" class="nav-link">
+                            <i data-lucide="settings"></i> Settings
+                        </a>
+                    </nav>
+                </div>
+                <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center">
+                        <img class="w-10 h-10 rounded-full" src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User">
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-800 dark:text-white">Priya Sharma</p>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Admin</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="flex items-center">
+                        <button id="mobile-menu-button" class="text-gray-500 dark:text-gray-400 focus:outline-none md:hidden">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                         <div class="relative">
+                            <select id="time-filter" class="appearance-none bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-800 dark:text-gray-200">
+                                <option value="all">All Time</option>
+                                <option value="year">This Year</option>
+                                <option value="month" selected>This Month</option>
+                                <option value="week">This Week</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-400">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <button id="add-project-btn" class="primary-button">
+                            <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+                            Add Project
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Mobile sidebar (hidden by default) -->
+            <div id="mobile-sidebar" class="hidden fixed inset-0 z-50">
+                <div class="absolute inset-0 bg-black opacity-50" id="mobile-sidebar-overlay"></div>
+                <div class="relative flex flex-col w-64 h-full bg-white dark:bg-gray-800">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                        <span class="text-xl font-semibold text-gray-800 dark:text-white">Menu</span>
+                        <button id="mobile-close-button" class="text-gray-500 dark:text-gray-400 focus:outline-none">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
+                        <nav class="flex-1 space-y-2">
+                            <a href="#" id="mobile-nav-dashboard" class="nav-link active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                            <a href="#" id="mobile-nav-projects" class="nav-link"><i data-lucide="kanban-square"></i> Projects</a>
+                            <a href="#" id="mobile-nav-team" class="nav-link"><i data-lucide="users"></i> Team</a>
+                            <a href="#" id="mobile-nav-settings" class="nav-link"><i data-lucide="settings"></i> Settings</a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main content area -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-100 dark:bg-gray-900/50">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page-content fade-in">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="stat-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="stat-title">Total Earnings</p>
+                                    <h3 class="stat-value">₹<span id="total-earnings">0</span></h3>
+                                </div>
+                                <div class="stat-icon bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400">
+                                    <i data-lucide="indian-rupee"></i>
+                                </div>
+                            </div>
+                            <p class="stat-change"><span id="earnings-change" class="text-green-500 font-medium">0%</span> vs previous period</p>
+                        </div>
+                        <div class="stat-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="stat-title">Monthly Growth</p>
+                                    <h3 class="stat-value"><span id="monthly-growth">0</span>%</h3>
+                                </div>
+                                <div class="stat-icon bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400">
+                                    <i data-lucide="trending-up"></i>
+                                </div>
+                            </div>
+                            <p class="stat-change"><span id="growth-change" class="text-green-500 font-medium">0%</span> vs previous month</p>
+                        </div>
+                        <div class="stat-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="stat-title">Avg. Project Value</p>
+                                    <h3 class="stat-value">₹<span id="avg-project-value">0</span></h3>
+                                </div>
+                                <div class="stat-icon bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400">
+                                    <i data-lucide="briefcase"></i>
+                                </div>
+                            </div>
+                            <p class="stat-change"><span id="avg-change" class="text-red-500 font-medium">0%</span> vs previous period</p>
+                        </div>
+                        <div class="stat-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="stat-title">Best Month</p>
+                                    <h3 class="stat-value"><span id="best-month">-</span></h3>
+                                </div>
+                                <div class="stat-icon bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400">
+                                    <i data-lucide="award"></i>
+                                </div>
+                            </div>
+                            <p class="stat-change">₹<span id="best-month-amount">0</span> in revenue</p>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <div class="content-card lg:col-span-2">
+                            <h2 class="card-title">Growth Curve</h2>
+                            <div class="h-80"><canvas id="growthChart"></canvas></div>
+                        </div>
+                        <div class="content-card">
+                            <h2 class="card-title">Project Distribution</h2>
+                            <div class="h-80"><canvas id="projectDistributionChart"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Projects & Client Distribution -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="content-card lg:col-span-2">
+                            <h2 class="card-title">Recent Projects</h2>
+                            <div class="overflow-x-auto">
+                                <table class="custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Project</th><th>Client</th><th>Date</th><th>Amount</th><th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-projects"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="content-card">
+                            <h2 class="card-title">Client Distribution</h2>
+                            <div class="h-64"><canvas id="clientDistributionChart"></canvas></div>
+                            <div id="client-legend" class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects Page -->
+                <div id="projects-page" class="page-content hidden fade-in">
+                    <div class="content-card">
+                        <h2 class="card-title">All Projects</h2>
+                        <div class="overflow-x-auto">
+                             <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Project Name</th><th>Client</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projects-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Team Page -->
+                <div id="team-page" class="page-content hidden fade-in">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="content-card lg:col-span-2">
+                            <h2 class="card-title">Team Members</h2>
+                            <div id="team-members-container" class="space-y-4">
+                                <!-- Team members will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="content-card">
+                            <h2 class="card-title">Team Performance</h2>
+                            <div class="h-80"><canvas id="teamPerformanceChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div id="settings-page" class="page-content hidden fade-in">
+                    <div class="content-card max-w-2xl mx-auto">
+                        <h2 class="card-title">Application Settings</h2>
+                        <div class="space-y-6 mt-4">
+                            <div class="flex items-center justify-between p-4 border dark:border-gray-700 rounded-lg">
+                                <div>
+                                    <h3 class="font-medium text-gray-800 dark:text-gray-200">Dark Mode</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Toggle the application's color scheme.</p>
+                                </div>
+                                <label for="dark-mode-toggle" class="flex items-center cursor-pointer">
+                                    <div class="relative">
+                                        <input type="checkbox" id="dark-mode-toggle" class="sr-only">
+                                        <div class="block bg-gray-200 dark:bg-gray-600 w-14 h-8 rounded-full"></div>
+                                        <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                                    </div>
+                                </label>
+                            </div>
+                             <div class="flex items-center justify-between p-4 border dark:border-gray-700 rounded-lg">
+                                <div>
+                                    <h3 class="font-medium text-gray-800 dark:text-gray-200">Currency</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Set your preferred display currency.</p>
+                                </div>
+                                <div class="relative">
+                                    <select id="currency-selector" class="appearance-none bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-800 dark:text-gray-200">
+                                        <option value="INR">INR (₹)</option>
+                                        <option value="USD">USD ($)</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-400">
+                                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Form Modal -->
+                <div id="project-modal" class="hidden fixed inset-0 overflow-y-auto z-50">
+                    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                            <div class="absolute inset-0 bg-gray-800 opacity-75"></div>
+                        </div>
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                            <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">Add New Project</h3>
+                                <div class="mt-4">
+                                    <form id="project-form" class="space-y-4">
+                                        <input type="hidden" id="project-id">
+                                        <div>
+                                            <label for="project-name" class="form-label">Project Name *</label>
+                                            <input type="text" id="project-name" class="form-input" required>
+                                        </div>
+                                        <div>
+                                            <label for="client-name" class="form-label">Client Name</label>
+                                            <input type="text" id="client-name" class="form-input">
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label for="project-date" class="form-label">Completion Date *</label>
+                                                <input type="date" id="project-date" class="form-input" required>
+                                            </div>
+                                            <div>
+                                                <label for="project-amount" class="form-label">Amount (₹) *</label>
+                                                <input type="number" id="project-amount" class="form-input" required>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="project-notes" class="form-label">Notes / Feedback</label>
+                                            <textarea id="project-notes" rows="3" class="form-input"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-gray-800/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <button type="button" id="save-project" class="primary-button w-full sm:ml-3 sm:w-auto">Save Project</button>
+                                <button type="button" id="cancel-project" class="secondary-button w-full mt-3 sm:mt-0 sm:w-auto">Cancel</button>
+                                <button type="button" id="delete-project" class="danger-button hidden mr-auto mt-3 sm:mt-0 sm:w-auto">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+</html>
