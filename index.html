@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growth Tracker | Startup Analytics</title>
+    <title>Growth Tracker </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -491,7 +491,7 @@
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             // Load sample data
-            loadSampleData();
+            
             
             // Set up event listeners
             setupEventListeners();
@@ -506,32 +506,7 @@
             updateAll();
         });
         
-        function loadSampleData() {
-            // Sample projects data
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const clients = ['Acme Corp', 'Globex', 'Soylent', 'Initech', 'Umbrella', 'Hooli', 'Wayne Ent'];
-            
-            // Generate sample projects for the last 6 months
-            const currentDate = new Date();
-            for (let i = 0; i < 20; i++) {
-                const monthOffset = Math.floor(Math.random() * 6);
-                const day = Math.floor(Math.random() * 28) + 1;
-                const month = (currentDate.getMonth() - monthOffset + 12) % 12;
-                const year = month > currentDate.getMonth() ? currentDate.getFullYear() - 1 : currentDate.getFullYear();
-                
-                projects.push({
-                    id: 'proj-' + i,
-                    name: 'Project ' + (i + 1),
-                    client: clients[Math.floor(Math.random() * clients.length)],
-                    date: new Date(year, month, day),
-                    amount: Math.floor(Math.random() * 90000) + 10000,
-                    notes: i % 3 === 0 ? 'Completed successfully' : i % 3 === 1 ? 'Some issues encountered' : 'Exceeded expectations'
-                });
-            }
-            
-            // Sort by date (newest first)
-            projects.sort((a, b) => b.date - a.date);
-        }
+        
         
         function setupEventListeners() {
             // Navigation
